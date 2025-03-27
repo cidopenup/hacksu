@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deforestation Detection System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Deforestation Detection System</h1>
+            <nav>
+                <button id="mapView" class="active">Map View</button>
+                <button id="analysisView">Analysis</button>
+                <button id="uploadView">Upload Image</button>
+            </nav>
+        </header>
+
+        <main>
+            <div id="mapView" class="view active">
+                <div id="map"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="detectionMode">Detection Mode:</label>
+                        <select id="detectionMode">
+                            <option value="standard">Standard</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="monitoring">Monitoring</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="timeRange">Time Range:</label>
+                        <select id="timeRange">
+                            <option value="1month">Last Month</option>
+                            <option value="3months">Last 3 Months</option>
+                            <option value="6months">Last 6 Months</option>
+                            <option value="1year">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="sensitivity">Sensitivity:</label>
+                        <input type="range" id="sensitivity" min="0" max="100" value="50">
+                    </div>
+                    <button id="analyzeArea" class="primary-button">Analyze Selected Area</button>
+                </div>
+            </div>
+
+            <div id="analysisView" class="view">
+                <div class="analysis-container">
+                    <div class="chart-container">
+                        <canvas id="deforestationChart"></canvas>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h3>Risk Assessment</h3>
+                            <div id="riskStats"></div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Detection Summary</h3>
+                            <div id="detectionStats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="uploadView" class="view">
+                <div class="upload-container">
+                    <h2>Upload Satellite Image</h2>
+                    <div class="upload-area" id="dropZone">
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                        <div class="upload-content">
+                            <img src="https://via.placeholder.com/100" alt="Upload icon" class="upload-icon">
+                            <p>Drag and drop your image here or click to browse</p>
+                            <p class="file-types">Supported formats: JPG, PNG, TIFF</p>
+                        </div>
+                    </div>
+                    <div id="preview" class="preview-container" style="display: none;">
+                        <img id="previewImage" src="" alt="Preview">
+                        <button id="analyzeImage" class="primary-button">Analyze Image</button>
+                    </div>
+                    <div id="results" class="results-container" style="display: none;">
+                        <h3>Analysis Results</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <h4>Deforestation Percentage</h4>
+                                <div class="percentage" id="deforestationPercentage">0%</div>
+                            </div>
+                            <div class="result-item">
+                                <h4>Confidence Level</h4>
+                                <div class="percentage" id="confidenceLevel">0%</div>
+                            </div>
+                        </div>
+                        <div class="mask-container">
+                            <h4>Detection Mask</h4>
+                            <img id="maskImage" src="" alt="Detection Mask">
+                        </div>
+                        <div class="risk-assessment">
+                            <h4>Risk Level</h4>
+                            <div class="risk-level" id="riskLevel">Low</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Deforestation Detection & Biodiversity Risk Mapping - Protecting our forests through advanced technology">
+    <meta name="keywords" content="deforestation, AI, biodiversity, mapping, environment, conservation">
+    <title>EcoGuard - AI-Powered Deforestation Detection</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-tree"></i>
+            <span>EcoGuard</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#detection">Detection</a></li>
+            <li><a href="#mapping">Mapping</a></li>
+            <li><a href="#statistics">Statistics</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>AI-Powered Deforestation Detection</h1>
+            <p>Protecting our forests through advanced technology and real-time monitoring</p>
+            <button class="cta-button" onclick="scrollToSection('detection')">
+                <i class="fas fa-search"></i> Start Detection
+            </button>
+        </div>
+    </section>
+
+    <!-- Detection Section -->
+    <section id="detection" class="detection-section">
+        <div class="section-header">
+            <h2>Deforestation Detection</h2>
+            <p>Real-time monitoring and analysis of forest areas</p>
+        </div>
+        <div class="detection-container">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            <div class="detection-controls">
+                <div class="control-panel">
+                    <h3>Detection Settings</h3>
+                    <div class="control-group">
+                        <label>Detection Mode</label>
+                        <select class="control-select" id="detectionMode">
+                            <option value="deforestation">Deforestation</option>
+                            <option value="water">Water Reservoirs</option>
+                        </select>
+                    </div>
+                    <div class="sensitivity-control">
+                        <label>Detection Sensitivity</label>
+                        <input type="range" min="1" max="10" value="5" class="sensitivity-slider">
+                    </div>
+                    <div class="time-range-control">
+                        <label>Time Range</label>
+                        <select class="control-select">
+                            <option value="1month">Last Month</option>
+                            <option value="3months">Last 3 Months</option>
+                            <option value="6months">Last 6 Months</option>
+                            <option value="1year">Last Year</option>
+                        </select>
+                    </div>
+                    <button class="detection-button" onclick="toggleAreaSelection()">
+                        <i class="fas fa-draw-polygon"></i>
+                        Select Area
+                    </button>
+                </div>
+                <div class="results-panel">
+                    <h3>Detection Results</h3>
+                    <div class="results-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Sites</span>
+                            <span class="stat-value" id="totalSites">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">High Risk</span>
+                            <span class="stat-value" id="highRisk">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Medium Risk</span>
+                            <span class="stat-value" id="mediumRisk">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Low Risk</span>
+                            <span class="stat-value" id="lowRisk">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="statistics-section">
+        <div class="section-header">
+            <h2>Trend Analysis</h2>
+            <p>Historical data and trend visualization</p>
+        </div>
+        <div class="stats-container">
+            <div class="stats-controls">
+                <div class="control-group">
+                    <label for="timeRange">Time Period</label>
+                    <select id="timeRange" class="control-select">
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="168">Last Week</option>
+                        <option value="720">Last Month</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="metricSelect">Metric</label>
+                    <select id="metricSelect" class="control-select">
+                        <option value="deforestation">Deforestation Rate</option>
+                        <option value="biodiversity">Biodiversity Index</option>
+                        <option value="carbon">Carbon Impact</option>
+                        <option value="water">Water Reservoir</option>
+                    </select>
+                </div>
+                <button id="updateTrends" class="update-button" onclick="updateCharts(document.getElementById('timeRange').value, document.getElementById('metricSelect').value)">
+                    <i class="fas fa-sync-alt"></i> Update Trends
+                </button>
+            </div>
+            
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>Deforestation Trend Analysis</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Biodiversity Impact Analysis</h3>
+                    <canvas id="impactChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Carbon Emissions Trend</h3>
+                    <canvas id="carbonTrendChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Water Reservoir Level Trend</h3>
+                    <canvas id="waterTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="section-header">
+            <h2>About Our Technology</h2>
+            <p>Advanced solutions for environmental monitoring and protection</p>
+        </div>
+        <div class="about-content">
+            <div class="tech-info">
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-satellite"></i>
+                        <h4>Satellite Monitoring</h4>
+                        <p>Our system utilizes high-resolution satellite imagery with 1-meter precision to track forest changes in real-time. We process multi-spectral data from multiple satellites including Landsat-8 and Sentinel-2 to detect even subtle changes in vegetation cover.</p>
+                        <ul class="feature-list">
+                            <li>Real-time monitoring with 12-hour update frequency</li>
+                            <li>Multi-spectral analysis using NIR and SWIR bands</li>
+                            <li>Historical data comparison spanning 10 years</li>
+                            <li>Cloud-penetrating radar technology for all-weather monitoring</li>
+                        </ul>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-brain"></i>
+                        <h4>AI Analysis</h4>
+                        <p>Powered by state-of-the-art deep learning models trained on millions of satellite images, our AI can identify and classify various types of environmental changes with over 95% accuracy.</p>
+                        <ul class="feature-list">
+                            <li>Advanced CNN architecture for pattern recognition</li>
+                            <li>Automated change detection algorithms</li>
+                            <li>Machine learning-based risk prediction</li>
+                            <li>Real-time anomaly detection system</li>
+                        </ul>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Risk Assessment</h4>
+                        <p>Our comprehensive risk assessment system combines multiple data sources to provide accurate predictions and impact analysis of environmental changes.</p>
+                        <ul class="feature-list">
+                            <li>Biodiversity impact scoring system</li>
+                            <li>Carbon footprint calculation and tracking</li>
+                            <li>Water resource monitoring and quality analysis</li>
+                            <li>Predictive modeling for future risk scenarios</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="additional-features">
+                    <div class="feature-row">
+                        <div class="feature">
+                            <i class="fas fa-cloud"></i>
+                            <h4>Cloud Processing</h4>
+                            <p>Distributed cloud computing infrastructure processes over 500TB of satellite data daily, enabling real-time analysis and rapid response capabilities.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h4>Mobile Alerts</h4>
+                            <p>Instant notifications and alerts through our mobile app keep stakeholders informed about critical environmental changes and potential risks.</p>
+                        </div>
+                    </div>
+                    <div class="feature-row">
+                        <div class="feature">
+                            <i class="fas fa-database"></i>
+                            <h4>Data Integration</h4>
+                            <p>Seamless integration with multiple data sources including weather stations, ground sensors, and historical databases for comprehensive analysis.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Verified Accuracy</h4>
+                            <p>Our system maintains 95%+ accuracy in deforestation detection, validated through extensive ground-truth data and expert verification.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add this section before the contact section -->
+    <section class="image-analysis-section">
+        <div class="section-header">
+            <h2>Image Analysis</h2>
+            <p>Analyze environmental conditions from uploaded images</p>
+        </div>
+        
+        <div class="image-analysis-container">
+            <div class="image-upload-area">
+                <div class="upload-box" id="uploadBox">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Image</h3>
+                    <p>Drag and drop an image or click to browse</p>
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                </div>
+            </div>
+            
+            <div class="analysis-results" id="analysisResults">
+                <div class="results-header">
+                    <h3>Analysis Results</h3>
+                    <div class="loading-spinner" id="analysisSpinner" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+                
+                <div class="environmental-indicators">
+                    <div class="indicator-card vegetation">
+                        <i class="fas fa-tree"></i>
+                        <h4>Vegetation</h4>
+                        <div class="indicator-value" id="vegetationValue">-</div>
+                    </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Our Location</h4>
+                    <p>123 Forest Avenue, Green City<br>Nature State, 12345</p>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <h4>Phone</h4>
+                    <p>+1 (555) 123-4567<br>+1 (555) 987-6543</p>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email</h4>
+                    <p>info@ecoguard.com<br>support@ecoguard.com</p>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <h4>Working Hours</h4>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Weekend: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+            <form id="contactForm" class="contact-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="name" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" required placeholder="Enter your email">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject <span class="required">*</span></label>
+                        <select id="subject" required>
+                            <option value="">Select a subject</option>
+                            <option value="report">Report Deforestation</option>
+                            <option value="water">Water Body Issues</option>
+                            <option value="support">Technical Support</option>
+                            <option value="partnership">Partnership Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message <span class="required">*</span></label>
+                    <textarea id="message" required placeholder="Enter your message here..."></textarea>
+                </div>
+                <div class="form-group attachment-group">
+                    <label for="attachment">Attach Files</label>
+                    <input type="file" id="attachment" multiple accept="image/*,.pdf,.doc,.docx">
+                    <small class="file-hint">Accepted files: Images, PDF, DOC (Max size: 5MB)</small>
+                </div>
+                <div class="form-group consent-group">
+                    <label class="checkbox-label">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Deforestation Detection & Biodiversity Risk Mapping - Protecting our forests through advanced technology">
+    <meta name="keywords" content="deforestation, AI, biodiversity, mapping, environment, conservation">
+    <title>EcoGuard - AI-Powered Deforestation Detection</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-tree"></i>
+            <span>EcoGuard</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#detection">Detection</a></li>
+            <li><a href="#mapping">Mapping</a></li>
+            <li><a href="#statistics">Statistics</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>AI-Powered Deforestation Detection</h1>
+            <p>Protecting our forests through advanced technology and real-time monitoring</p>
+            <button class="cta-button" onclick="scrollToSection('detection')">
+                <i class="fas fa-search"></i> Start Detection
+            </button>
+        </div>
+    </section>
+
+    <!-- Detection Section -->
+    <section id="detection" class="detection-section">
+        <div class="section-header">
+            <h2>Deforestation Detection</h2>
+            <p>Real-time monitoring and analysis of forest areas</p>
+        </div>
+        <div class="detection-container">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            <div class="detection-controls">
+                <div class="control-panel">
+                    <h3>Detection Settings</h3>
+                    <div class="control-group">
+                        <label>Detection Mode</label>
+                        <select class="control-select" id="detectionMode">
+                            <option value="deforestation">Deforestation</option>
+                            <option value="water">Water Reservoirs</option>
+                        </select>
+                    </div>
+                    <div class="sensitivity-control">
+                        <label>Detection Sensitivity</label>
+                        <input type="range" min="1" max="10" value="5" class="sensitivity-slider">
+                    </div>
+                    <div class="time-range-control">
+                        <label>Time Range</label>
+                        <select class="control-select">
+                            <option value="1month">Last Month</option>
+                            <option value="3months">Last 3 Months</option>
+                            <option value="6months">Last 6 Months</option>
+                            <option value="1year">Last Year</option>
+                        </select>
+                    </div>
+                    <button class="detection-button" onclick="toggleAreaSelection()">
+                        <i class="fas fa-draw-polygon"></i>
+                        Select Area
+                    </button>
+                </div>
+                <div class="results-panel">
+                    <h3>Detection Results</h3>
+                    <div class="results-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Sites</span>
+                            <span class="stat-value" id="totalSites">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">High Risk</span>
+                            <span class="stat-value" id="highRisk">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Medium Risk</span>
+                            <span class="stat-value" id="mediumRisk">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Low Risk</span>
+                            <span class="stat-value" id="lowRisk">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="statistics-section">
+        <div class="section-header">
+            <h2>Trend Analysis</h2>
+            <p>Historical data and trend visualization</p>
+        </div>
+        <div class="stats-container">
+            <div class="stats-controls">
+                <div class="control-group">
+                    <label for="timeRange">Time Period</label>
+                    <select id="timeRange" class="control-select">
+                        <option value="24">Last 24 Hours</option>
+                        <option value="48">Last 48 Hours</option>
+                        <option value="168">Last Week</option>
+                        <option value="720">Last Month</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="metricSelect">Metric</label>
+                    <select id="metricSelect" class="control-select">
+                        <option value="deforestation">Deforestation Rate</option>
+                        <option value="biodiversity">Biodiversity Index</option>
+                        <option value="carbon">Carbon Impact</option>
+                        <option value="water">Water Reservoir</option>
+                    </select>
+                </div>
+                <button id="updateTrends" class="update-button" onclick="updateCharts(document.getElementById('timeRange').value, document.getElementById('metricSelect').value)">
+                    <i class="fas fa-sync-alt"></i> Update Trends
+                </button>
+            </div>
+            
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>Deforestation Trend Analysis</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Biodiversity Impact Analysis</h3>
+                    <canvas id="impactChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Carbon Emissions Trend</h3>
+                    <canvas id="carbonTrendChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Water Reservoir Level Trend</h3>
+                    <canvas id="waterTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="section-header">
+            <h2>About Our Technology</h2>
+            <p>Advanced solutions for environmental monitoring and protection</p>
+        </div>
+        <div class="about-content">
+            <div class="tech-info">
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-satellite"></i>
+                        <h4>Satellite Monitoring</h4>
+                        <p>Our system utilizes high-resolution satellite imagery with 1-meter precision to track forest changes in real-time. We process multi-spectral data from multiple satellites including Landsat-8 and Sentinel-2 to detect even subtle changes in vegetation cover.</p>
+                        <ul class="feature-list">
+                            <li>Real-time monitoring with 12-hour update frequency</li>
+                            <li>Multi-spectral analysis using NIR and SWIR bands</li>
+                            <li>Historical data comparison spanning 10 years</li>
+                            <li>Cloud-penetrating radar technology for all-weather monitoring</li>
+                        </ul>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-brain"></i>
+                        <h4>AI Analysis</h4>
+                        <p>Powered by state-of-the-art deep learning models trained on millions of satellite images, our AI can identify and classify various types of environmental changes with over 95% accuracy.</p>
+                        <ul class="feature-list">
+                            <li>Advanced CNN architecture for pattern recognition</li>
+                            <li>Automated change detection algorithms</li>
+                            <li>Machine learning-based risk prediction</li>
+                            <li>Real-time anomaly detection system</li>
+                        </ul>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Risk Assessment</h4>
+                        <p>Our comprehensive risk assessment system combines multiple data sources to provide accurate predictions and impact analysis of environmental changes.</p>
+                        <ul class="feature-list">
+                            <li>Biodiversity impact scoring system</li>
+                            <li>Carbon footprint calculation and tracking</li>
+                            <li>Water resource monitoring and quality analysis</li>
+                            <li>Predictive modeling for future risk scenarios</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="additional-features">
+                    <div class="feature-row">
+                        <div class="feature">
+                            <i class="fas fa-cloud"></i>
+                            <h4>Cloud Processing</h4>
+                            <p>Distributed cloud computing infrastructure processes over 500TB of satellite data daily, enabling real-time analysis and rapid response capabilities.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h4>Mobile Alerts</h4>
+                            <p>Instant notifications and alerts through our mobile app keep stakeholders informed about critical environmental changes and potential risks.</p>
+                        </div>
+                    </div>
+                    <div class="feature-row">
+                        <div class="feature">
+                            <i class="fas fa-database"></i>
+                            <h4>Data Integration</h4>
+                            <p>Seamless integration with multiple data sources including weather stations, ground sensors, and historical databases for comprehensive analysis.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Verified Accuracy</h4>
+                            <p>Our system maintains 95%+ accuracy in deforestation detection, validated through extensive ground-truth data and expert verification.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="section-header">
+            <h2>Contact Us</h2>
+            <p>Get in touch with our team</p>
+        </div>
+        <div class="contact-container">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>EcoGuard</h4>
+                <p>Protecting our planet through technology</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#detection">Detection</a></li>
+                    <li><a href="#mapping">Mapping</a></li>
+                    <li><a href="#statistics">Statistics</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect With Us</h4>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 EcoGuard. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading maps...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html> 
